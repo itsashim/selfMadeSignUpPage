@@ -16,19 +16,16 @@ app.post("/", function (req, res) {
   const lname = req.body.lastName;
   const email = req.body.email;
   console.log(fname, lname, email, res.statusCode);
-  if (res.statusCode === 200) {
-    res.sendFile(__dirname + "/success.html");
-  } else {
-    res.sendFile(__dirname + "/error.html");
-  }
 
   const data = {
     members: [
       {
         email_address: email,
         status: "subscribed",
-        FNAME: fname,
-        LNAME: lname,
+        merge_fields: {
+          FNAME: firstName,
+          LNAME: lastName,
+        },
       },
     ],
   };
@@ -41,6 +38,12 @@ app.post("/", function (req, res) {
     auth: "ashim:283b1f640c241d682b6f828f6eceeebd-us21",
   };
   const request = https.request(url, options, function (response) {
+    if (response.statusCode === 200) {
+      res.sendFile(__dirname + "/success.html");
+    } else {
+      res.sendFile(__dirname + "/error.html");
+    }
+
     response.on("data", function (data) {
       console.log(JSON.parse(data));
     });
@@ -55,5 +58,5 @@ app.post("/", function (req, res) {
 });
 
 app.listen(process.env.PORT || 3000, function () {
-  console.log("Server is running");
+  console.log("Server is running", process.env.PORT);
 });
